@@ -16,28 +16,39 @@
 
 ### Installation
 
+There is no hosted Flatpak repository for this test copy yet, so the app is built and installed locally.
+
 * If Flatpak is not already enabled on your Linux distribution, follow [these instructions](https://flatpak.org/setup/) for your distribution to enable it.
-* If Flatpak is integrated with your Software Center (as in Fedora Workstation or Manjaro), download [`xyz.fontra.FontraPak.flatpakref`](https://fontra.github.io/fontra-flatpak/xyz.fontra.FontraPak.flatpakref), right-click it, and select **Open with -> Software Install**.
-* Otherwise, copy and paste the following command into your terminal:
+* Install `flatpak-builder` and add Flathub (the KDE runtime and the PyQt BaseApp come from there):
 
 ```bash
-flatpak install --from https://fontra.github.io/fontra-flatpak/xyz.fontra.FontraPak.flatpakref
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 ```
-* Type Y for yes and provide your password when prompted
-* Fontrapak with all its dependancy will be installed in your computer
+
+* Clone this repository and build:
+
+```bash
+git clone -b source-build https://github.com/t4rik/fontrax-flatpak.git
+cd fontrax-flatpak
+flatpak-builder --user --install --install-deps-from=flathub --force-clean build-dir io.github.t4rik.FontraXPak.yml
+```
+
+* The build takes a while (cffsubr is compiled from source). Fontra Pak with all its dependencies is installed for your user.
 
 ### Update
 
-* If Fontrapak is showing in your Software centre, you can press the "Update" button to update to the latest version.
-* Otherwise. open your terminal and type
+There is no remote to update from, so pull and rebuild:
+
 ```bash
-flatpak update xyz.fontra.FontraPak
+git pull
+flatpak-builder --user --install --force-clean build-dir io.github.t4rik.FontraXPak.yml
 ```
+
 ### Running Fontra Flatpak
 
 * In terminal, start the application by typing
 ```bash
-flatpak run xyz.fontra.FontraPak
+flatpak run io.github.t4rik.FontraXPak
 ```
 * Alternatively, open your app menu app menu and click on the Fontra icon <img src="https://fontra.xyz/fontra-icon.svg" alt="Fontra icon" height="32">
 
@@ -50,5 +61,5 @@ flatpak run xyz.fontra.FontraPak
 
 ### Reporting Issues
 
-* **Flatpak packaging or runtime issues:** Open an issue on [fontra-flatpak/issues](https://github.com/fontra/fontra-flatpak/issues).
-* **General Linux bugs or application crashes:** Open an issue on [fontra-pak/issues](https://github.com/fontra/fontra-pak/issues).
+* **Flatpak packaging or runtime issues:** Open an issue on [fontrax-flatpak/issues](https://github.com/t4rik/fontrax-flatpak/issues).
+* **General Linux bugs or application crashes:** Open an issue on [fontrax-pak/issues](https://github.com/t4rik/fontrax-pak/issues).
