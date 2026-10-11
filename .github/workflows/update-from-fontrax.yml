@@ -49,8 +49,8 @@ jobs:
                  --jq '.assets[] | select(.name | endswith(".whl")) | .url' | head -n1)"
           [ -n "$url" ] || { echo "release $tag has no wheel"; exit 1; }
 
-          curl -fsSL "$url" -o fontra.whl
-          sha="$(sha256sum fontra.whl | cut -d' ' -f1)"
+          curl -fsSL "$url" -o "$RUNNER_TEMP/fontra.whl"
+          sha="$(sha256sum "$RUNNER_TEMP/fontra.whl" | cut -d' ' -f1)"
           pak="$(gh api "repos/$FONTRAX_PAK/commits/HEAD" --jq .sha)"
 
           {
