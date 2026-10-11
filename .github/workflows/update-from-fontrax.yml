@@ -1,0 +1,127 @@
+name: Update from fontrax release
+
+# Runs when t4rik/fontrax publishes a release (repository_dispatch, sent by its
+# release-assets workflow) or by hand. Updates the manifest to the new release
+# wheel and the current fontrax-pak commit, then opens a PR for review.
+
+on:
+  repository_dispatch:
+    types: [fontrax-release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "fontrax release tag (empty = latest release)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  MANIFEST: io.github.t4rik.FontraXPak.yml
+  METAINFO: io.github.t4rik.FontraXPak.metainfo.xml
+  FONTRAX: t4rik/fontrax
+  FONTRAX_PAK: t4rik/fontrax-pak
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: source-build
+
+      - name: Resolve the release
+        id: rel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_TAG: ${{ github.event.client_payload.tag }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          tag="${EVENT_TAG:-$INPUT_TAG}"
+          if [ -z "$tag" ]; then
+            tag="$(gh release list -R "$FONTRAX" --limit 1 --json tagName --jq '.[0].tagName')"
+          fi
+          [ -n "$tag" ] || { echo "no release found"; exit 1; }
+
+          url="$(gh release view "$tag" -R "$FONTRAX" --json assets \
+                 --jq '.assets[] | select(.name | endswith(".whl")) | .url' | head -n1)"
+          [ -n "$url" ] || { echo "release $tag has no wheel"; exit 1; }
+
+          curl -fsSL "$url" -o fontra.whl
+          sha="$(sha256sum fontra.whl | cut -d' ' -f1)"
+          pak="$(gh api "repos/$FONTRAX_PAK/commits/HEAD" --jq .sha)"
+
+          {
+            echo "tag=$tag"
+            echo "url=$url"
+            echo "sha=$sha"
+            echo "pak=$pak"
+          } >> "$GITHUB_OUTPUT"
+          echo "release $tag, wheel sha256 $sha, fontrax-pak $pak"
+
+      - name: Patch manifest and metainfo
+        env:
+          TAG: ${{ steps.rel.outputs.tag }}
+          URL: ${{ steps.rel.outputs.url }}
+          SHA: ${{ steps.rel.outputs.sha }}
+          PAK: ${{ steps.rel.outputs.pak }}
+        run: |
+          python3 - <<'PY'
+          import datetime, os, pathlib, re, sys
+
+          manifest = pathlib.Path(os.environ["MANIFEST"])
+          text = manifest.read_text()
+
+          # fontra wheel: url + sha256 (the two lines after "- name: fontra")
+          text, n1 = re.subn(
+              r"(url: )https://github\.com/t4rik/fontrax/releases/download/\S+\.whl"
+              r"(\n\s+sha256: )[0-9a-f]{64}",
+              lambda m: f"{m.group(1)}{os.environ['URL']}{m.group(2)}{os.environ['SHA']}",
+              text,
+          )
+          # fontrax-pak commit
+          text, n2 = re.subn(
+              r"(url: https://github\.com/t4rik/fontrax-pak\.git\n\s+commit: )[0-9a-f]{40}",
+              lambda m: f"{m.group(1)}{os.environ['PAK']}",
+              text,
+          )
+          if (n1, n2) != (1, 1):
+              sys.exit(f"manifest patterns matched {n1} and {n2} times, expected 1 and 1")
+          manifest.write_text(text)
+
+          # metainfo: add a <release> entry if this version is not listed yet
+          version = os.environ["TAG"].lstrip("v")
+          meta = pathlib.Path(os.environ["METAINFO"])
+          mtext = meta.read_text()
+          if f'version="{version}"' not in mtext:
+              date = datetime.date.today().isoformat()
+              mtext, n3 = re.subn(
+                  r"(<releases>\s*)",
+                  lambda m: f'{m.group(1)}<release version="{version}" date="{date}"/>\n    ',
+                  mtext,
+                  count=1,
+              )
+              if n3 != 1:
+                  sys.exit("no <releases> element found in metainfo")
+              meta.write_text(mtext)
+          PY
+          git --no-pager diff --stat
+
+      - name: Open a pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: update-from-fontrax
+          base: source-build
+          title: "Update to fontrax ${{ steps.rel.outputs.tag }}"
+          commit-message: "Update to fontrax ${{ steps.rel.outputs.tag }}"
+          body: |
+            Automated update.
+
+            - fontrax release: `${{ steps.rel.outputs.tag }}`
+            - wheel sha256: `${{ steps.rel.outputs.sha }}`
+            - fontrax-pak commit: `${{ steps.rel.outputs.pak }}`
+
+            Check that the Flatpak still builds offline before merging.
+          delete-branch: true
