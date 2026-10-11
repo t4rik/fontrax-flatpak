@@ -33,6 +33,7 @@
   </categories>
   <launchable type="desktop-id">io.github.t4rik.FontraXPak.desktop</launchable>
   <releases>
+    <release version="2026.10.0rc2" date="2026-10-11"/>
     <release version="2026.9.0" date="2026-09-25"/>
     <release version="2026.9.0" date="2026-09-14"/>
     <release version="2026.9.0" date="2026-09-14"/>
