@@ -123,8 +123,8 @@ modules:
       - pip3 install --verbose --no-index --no-deps --prefix=${FLATPAK_DEST} fontra-*.whl
     sources:
       - type: file
-        url: https://github.com/t4rik/fontrax/releases/download/v2026.10.0rc1/fontra-2026.10.0rc1-py3-none-any.whl
-        sha256: e3e7343021bbe89781311d55ffa8b797610742bd27b0a865c17d893877d1729b
+        url: https://github.com/t4rik/fontrax/releases/download/v2026.10.0rc2/fontra-2026.10.0rc2-py3-none-any.whl
+        sha256: 48ad3dbcf70b236439e2308dde2ea18f91b406dbdb8229929bcfb1527e37f9dd
 
   - name: fontra-compile
     buildsystem: simple
