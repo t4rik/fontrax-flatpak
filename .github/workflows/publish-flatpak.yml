@@ -1,0 +1,83 @@
+name: Publish Flatpak repo
+
+# Builds the Flatpak from the manifest (sources are downloaded first, the build
+# itself runs offline) and publishes an OSTree repo plus a .flatpakref to
+# GitHub Pages:
+#   https://t4rik.github.io/fontrax-flatpak/io.github.t4rik.FontraXPak.flatpakref
+
+on:
+  push:
+    branches: [source-build]
+    paths-ignore: ["README.md", "screenshots/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  APP_ID: io.github.t4rik.FontraXPak
+  MANIFEST: io.github.t4rik.FontraXPak.yml
+  BRANCH: stable
+  SITE: https://t4rik.github.io/fontrax-flatpak
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install flatpak tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder ostree
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Build
+        run: |
+          flatpak-builder --user --force-clean --disable-rofiles-fuse \
+            --install-deps-from=flathub \
+            --default-branch="$BRANCH" \
+            --repo=repo build-dir "$MANIFEST"
+
+      - name: Prepare the site
+        run: |
+          flatpak build-update-repo --generate-static-deltas --prune repo
+          mkdir -p site
+          cp -r repo site/repo
+          # No GPGKey line: flatpak then adds the remote without signature
+          # verification. Fine for this test, sign the repo before real use.
+          printf '%s\n' \
+            '[Flatpak Ref]' \
+            'Title=Fontra X Pak' \
+            "Name=$APP_ID" \
+            "Branch=$BRANCH" \
+            "Url=$SITE/repo" \
+            'IsRuntime=false' \
+            'RuntimeRepo=https://dl.flathub.org/repo/flathub.flatpakrepo' \
+            > "site/$APP_ID.flatpakref"
+          printf '%s\n' \
+            '<!doctype html><meta charset="utf-8"><title>Fontra X Pak</title>' \
+            "<h1>Fontra X Pak (test)</h1><p><a href=\"$APP_ID.flatpakref\">$APP_ID.flatpakref</a></p>" \
+            "<pre>flatpak install --user --from $SITE/$APP_ID.flatpakref</pre>" \
+            > site/index.html
+          du -sh site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
