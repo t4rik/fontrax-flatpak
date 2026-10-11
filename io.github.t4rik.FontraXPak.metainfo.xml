@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <component type="desktop">
-  <id>xyz.fontra.FontraPak</id>
+  <id>io.github.t4rik.FontraXPak</id>
   <name>FontraPak</name>
   <summary>Standalone desktop build of the Fontra font editor</summary>
-  <developer id="xyz.fontra">
+  <developer id="io.github.t4rik">
     <name>Just van Rossum</name>
   </developer>
   <description>
@@ -24,14 +24,14 @@
     </ul>
   </description>
   <url type="homepage">https://fontra.xyz/</url>
-  <url type="bugtracker">https://github.com/fontra/fontra-pak/issues</url>
+  <url type="bugtracker">https://github.com/t4rik/fontrax-pak/issues</url>
   <url type="help">https://docs.fontra.xyz/</url>
-  <url type="vcs-browser">https://github.com/fontra/fontra-flatpak</url>
+  <url type="vcs-browser">https://github.com/t4rik/fontrax-flatpak</url>
   <categories>
     <category>Graphics</category>
     <category>Development</category>
   </categories>
-  <launchable type="desktop-id">xyz.fontra.FontraPak.desktop</launchable>
+  <launchable type="desktop-id">io.github.t4rik.FontraXPak.desktop</launchable>
   <releases>
     <release version="2026.9.0" date="2026-09-25"/>
     <release version="2026.9.0" date="2026-09-14"/>
@@ -88,35 +88,35 @@
   <screenshots>
     <screenshot type="default">
       <caption>Main application interface on Linux (Dark)</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_02_dark.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_02_dark.png</image>
     </screenshot>
     <screenshot>
       <caption>Main application interface on Linux (Light)</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_02_light.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_02_light.png</image>
     </screenshot>
     <screenshot>
       <caption>Text shaping and OpenType features editor (Dark)</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_03_dark.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_03_dark.png</image>
     </screenshot>
     <screenshot>
       <caption>Text shaping and OpenType features editor (Light)</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_03_light.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_03_light.png</image>
     </screenshot>
     <screenshot>
       <caption>Font export and build configuration</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_04_export.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_04_export.png</image>
     </screenshot>
     <screenshot>
       <caption>Open files dialog (Dark)</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_01_dark.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_01_dark.png</image>
     </screenshot>
     <screenshot>
       <caption>Open files dialog (Light)</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_01_light.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_01_light.png</image>
     </screenshot>
     <screenshot>
       <caption>Fontra running on macOS</caption>
-      <image type="source">https://raw.githubusercontent.com/fontra/fontra-flatpak/main/screenshots/screenshot_00_macos.png</image>
+      <image type="source">https://raw.githubusercontent.com/t4rik/fontrax-flatpak/main/screenshots/screenshot_00_macos.png</image>
     </screenshot>
   </screenshots>
   <metadata_license>CC0-1.0</metadata_license>

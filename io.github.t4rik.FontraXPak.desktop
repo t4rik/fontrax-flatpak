@@ -7,5 +7,5 @@ Type=Application
 Categories=Development;
 Keywords=fonteditor;graphics;
 StartupNotify=true
-Icon=xyz.fontra.FontraPak
+Icon=io.github.t4rik.FontraXPak
 Exec=fontrapak %U
