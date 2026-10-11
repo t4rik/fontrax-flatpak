@@ -16,32 +16,31 @@
 
 ### Installation
 
-There is no hosted Flatpak repository for this test copy yet, so the app is built and installed locally.
-
 * If Flatpak is not already enabled on your Linux distribution, follow [these instructions](https://flatpak.org/setup/) for your distribution to enable it.
-* Install `flatpak-builder` and add Flathub (the KDE runtime and the PyQt BaseApp come from there):
+* If Flatpak is integrated with your Software Center (as in Fedora Workstation or Manjaro), download [`io.github.t4rik.FontraXPak.flatpakref`](https://t4rik.github.io/fontrax-flatpak/io.github.t4rik.FontraXPak.flatpakref), right-click it, and select **Open with -> Software Install**.
+* Otherwise, copy and paste the following command into your terminal:
 
 ```bash
-flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --user --from https://t4rik.github.io/fontrax-flatpak/io.github.t4rik.FontraXPak.flatpakref
+```
+* Type Y for yes when prompted.
+* Fontra Pak with all its dependencies will be installed on your computer.
+
+### Update
+
+* If Fontra Pak is showing in your Software Center, press the "Update" button to update to the latest version.
+* Otherwise, open your terminal and type:
+
+```bash
+flatpak update io.github.t4rik.FontraXPak
 ```
 
-* Clone this repository and build:
+### Building from source
 
 ```bash
 git clone -b source-build https://github.com/t4rik/fontrax-flatpak.git
 cd fontrax-flatpak
 flatpak-builder --user --install --install-deps-from=flathub --force-clean build-dir io.github.t4rik.FontraXPak.yml
-```
-
-* The build takes a while (cffsubr is compiled from source). Fontra Pak with all its dependencies is installed for your user.
-
-### Update
-
-There is no remote to update from, so pull and rebuild:
-
-```bash
-git pull
-flatpak-builder --user --install --force-clean build-dir io.github.t4rik.FontraXPak.yml
 ```
 
 ### Running Fontra Flatpak
